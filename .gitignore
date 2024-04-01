@@ -1,0 +1,3 @@
+# file yang tidak akan ter-upload
+.env
+/node_modules
