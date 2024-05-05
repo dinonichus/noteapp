@@ -1,0 +1,143 @@
+<!-- tampilan detail dari note yang dibuat -->
+<div class="mb-3">
+	<div class="d-flex justify-content-between align-items-center">
+		<h1>Note Details</h1>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item">
+					<a href="/notes" class="text-primary text-decoration-none">Dashboard</a>
+				</li>
+				<li class="breadcrumb-item active"><%= note.title %></li>
+			</ol>
+		</nav>
+	</div>
+
+	<p class="text-muted w-50">
+		This is the content of your note. You can edit it below, or click the Delete button to remove it.
+	</p>
+
+	<!-- error handling -->
+	<% if (error) { %>
+	<p class="text-danger mt-1"><%= error %></p>
+	<% } %>
+</div>
+
+<div class="row g-5">
+
+	<!-- pengisian konten-konten note -->
+	<!-- menambahkan note ke database -->
+	<form
+		action="/notes/<%= id %>?_method=PUT"
+		method="POST"
+		class="bg-white px-5 py-4 rounded-4 border mb-4 col-12 col-lg-8">
+		<div class="mb-3">
+			<label for="title" class="form-label">Note Title</label>
+			<input
+				type="text"
+				class="form-control bg-light"
+				id="title"
+				name="title"
+				required
+				value="<%= note.title %>" />
+		</div>
+
+		<div class="mb-3">
+			<label for="excerpt" class="form-label">Note Excerpt</label>
+			<textarea name="excerpt" id="excerpt" class="form-control bg-light" required><%= note.excerpt %></textarea>
+		</div>
+
+		<div class="mb-4">
+			<label for="body" class="form-label">Note Content</label>
+			<textarea name="body" id="body" class="form-control bg-light"><%- note.body %></textarea>
+		</div>
+
+		<div class="form-group">
+			<button type="submit" class="btn btn-primary me-2">Update</button>
+			<button
+				type="button"
+				class="btn btn-outline-danger"
+				data-bs-toggle="modal"
+				id="deleteButton"
+				data-bs-target="#delete">
+				Delete Note
+			</button>
+		</div>
+	</form>
+
+	<!-- menampilkan daftar todo list, jika tidak ada makan akan ditampilkan placeholder "No todos yet" -->
+	<div class="col-12 col-lg-4">
+		<div class="bg-white rounded-4 p-4 border mb-4">
+			<% if (todos.length) { todos.forEach((todo) => { %>
+
+			<div class="d-flex align-items-center border rounded-3 px-3 py-2 bg-light mb-3">
+				<span class="text-primary"><%= todo.body %></span>
+				<form action="/notes/<%= id %>/todos/<%= todo._id %>?_method=DELETE" method="POST" class="ms-auto">
+					<button type="submit" class="btn btn-link text-danger p-0">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-x">
+							<path d="M18 6 6 18" />
+							<path d="m6 6 12 12" />
+						</svg>
+					</button>
+				</form>
+			</div>
+
+			<% }) } else { %>
+			<p class="text-muted">No todos yet</p>
+			<% } %>
+		</div>
+
+		<!-- pengisian penambahan todo -->
+		<form action="/notes/<%= id %>/todos" method="POST" class="bg-white rounded-4 p-4 border">
+			<div class="mb-3">
+				<label for="todo" class="form-label">Add Todo</label>
+				<input type="text" class="form-control bg-light" id="todo" name="body" required />
+			</div>
+			<input type="hidden" name="noteId" value="<%= id %>" />
+			<button type="submit" class="btn btn-primary">Add Todo</button>
+		</form>
+	</div>
+
+	<!-- konfirmasi untuk penghapusan note
+	setelah diapus, notes akan dihapus dari database -->
+	<div class="modal fade" tabindex="-1" role="dialog" id="delete">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content rounded-4">
+				<div class="modal-header">
+					<span class="modal-title fw-bold">You are about to delete a note</span>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body text-muted">
+					This will delete your note <%= note.title %> Are you sure? Once deleted, you will not be able to
+					recover this note.
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+					<form action="/notes/<%= id %>?_method=DELETE" method="POST" class="position-relative">
+						<button type="submit" class="btn btn-danger">Delete</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.ckeditor.com/ckeditor5/41.3.0/classic/ckeditor.js"></script>
+	<!-- fitur text editor -->
+	<script>
+		ClassicEditor.create(document.querySelector('#body'), {
+			toolbar: ['bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
+			placeholder: 'Enter your note content here...',
+		}).catch((error) => {
+			console.error(error);
+		});
+	</script>
+</div>

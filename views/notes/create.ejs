@@ -1,0 +1,56 @@
+<!-- tampilan halaman saat membuat note baru -->
+<div class="mb-3">
+	<div class="d-flex justify-content-between align-items-center">
+		<h1>Create a new note</h1>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item">
+					<a href="/notes" class="text-primary text-decoration-none">Dashboard</a>
+				</li>
+				<li class="breadcrumb-item active">Add Note</li>
+			</ol>
+		</nav>
+	</div>
+
+	<p class="text-muted w-50">
+		Enter a title and the content of your note below, then click the Add Note button to save it.
+	</p>
+
+	<!-- error handling -->
+	<% if (error) { %>
+	<p class="text-danger mt-1"><%= error %></p>
+	<% } %>
+</div>
+
+<!-- pengisian konten-konten notes -->
+<form action="/notes" method="POST" class="bg-white px-5 py-4 rounded-4 border mb-4 w-100">
+	<div class="mb-3">
+		<label for="title" class="form-label">Note Title</label>
+		<input type="text" class="form-control bg-light" id="title" name="title" required />
+	</div>
+
+	<div class="mb-3">
+		<label for="excerpt" class="form-label">Note Excerpt</label>
+		<textarea name="excerpt" id="excerpt" class="form-control bg-light" required rows="3"></textarea>
+	</div>
+
+	<div class="mb-4">
+		<label for="body" class="form-label">Note Content</label>
+		<textarea name="body" id="body" class="form-control bg-light"></textarea>
+	</div>
+
+	<div class="form-group">
+		<button type="submit" class="btn btn-primary">+ Add Note</button>
+	</div>
+</form>
+
+<script src="https://cdn.ckeditor.com/ckeditor5/41.3.0/classic/ckeditor.js"></script>
+<!-- fitur text editor -->
+<script>
+	ClassicEditor.create(document.querySelector('#body'), {
+		toolbar: ['bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
+		placeholder: 'Enter your note content here...',
+	}).catch((error) => {
+		console.error(error);
+	});
+</script>

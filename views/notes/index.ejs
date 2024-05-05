@@ -1,0 +1,121 @@
+<!-- tampilan setelah sign in/sign up -->
+<div class="mb-5">
+	<!-- welcome section dengan template username -->
+	<h1>Welcome back, <%= user.name %></h1>
+	<p class="text-dark w-50">
+		Welcome to your dashboard. Here you can view, add, edit, and delete your notes. Click on a note to view or edit
+		it or click the + New Note button to create a new note.
+	</p>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-5">
+	<!-- tombol untuk membuat note baru -->
+	<a href="/notes/create" class="btn btn-outline-primary d-flex align-items-center">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="18"
+			height="18"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class="me-2">
+			<path d="M5 12h14" />
+			<path d="M12 5v14" />
+		</svg>
+		New Note
+	</a>
+
+	<!-- fitur search untuk mencari note yang pernah dibuat -->
+	<form role="search" method="POST" action="/notes/search" class="d-flex">
+		<input
+			type="search"
+			name="query"
+			class="form-control border-primary rounded-pill me-2"
+			placeholder="Search..."
+			aria-label="Search"
+			value="<%= query %>" />
+
+		<button type="submit" class="btn btn-primary d-flex align-items-center">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="18"
+				height="18"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round">
+				<circle cx="11" cy="11" r="8" />
+				<path d="m21 21-4.3-4.3" />
+			</svg>
+		</button>
+	</form>
+</div>
+
+<div class="row g-4 mb-5">
+	<!-- menampilkan daftar seluruh notes yang telah dibuat -->
+	<% if (notes.length) { notes.forEach((note) => { %>
+	<div class="col-sm-3">
+		<a href="/notes/<%= note._id %>" class="card border-primary rounded-4 text-decoration-none">
+			<div class="card-body p-4 text-muted">
+				<!-- menampilkan judul dari note -->
+				<span class="d-block fw-bold text-primary mb-2"><%= note.title %></span>
+				<!-- menampilkan deskripsi singkat dari note -->
+				<p class="text-muted"><%= note.excerpt %></p>
+			</div>
+		</a>
+	</div>
+	<% }) } else { %>
+		<!-- jika tidak ada notes yang dibuat -->
+	<div class="d-flex flex-column justify-content-center align-items-center mb-4" style="height: 50vh">
+		<img src="/img/human-3.svg" alt="Human pointing hand toward a create button" class="person mb-4" />
+		<h3>Hmm, it's empty here...</h3>
+		<p class="text-muted">Nothing to see here yet. Click the button below to create your first note.</p>
+		<a href="/notes/create" class="btn btn-primary">Create</a>
+	</div>
+	<% } %>
+</div>
+
+<!-- pengaturan pagination -->
+<% if(notes.length > 0) { %>
+<nav aria-label="pagination">
+	<ul class="pagination justify-content-center">
+
+		<!--jika pada posisi halaman 1, akan menampilkan tautan "Previous" -->
+		<% if(current == 1) { %>
+		<li class="page-item">
+			<a class="page-link" href="#">Previous</a>
+		</li>
+		<!-- jika tidak, akan menampilkan tautan "First" (merujuk ke pagination paling awal) -->
+		<% } else { %>
+		<li class="page-item">
+			<a class="page-link" href="/notes">First</a>
+		</li>
+
+		<!-- menambahkan linknavigation baru untuk jumlah halaman lebh dari 1 -->
+		<% } %> <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %> <% if (i !== 1 ) { %>
+		<li class="page-item"><a class="page-link" href="#">...</a></li>
+		<% } %> <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %> <% if(i == current ) { %>
+		<li class="page-item">
+			<a class="page-link" href="#"><%= i %></a>
+		</li>
+		<% } else { %>
+		<li class="page-item">
+			<a class="page-link" href="/notes/?page=<%= i %>"><%= i %></a>
+		</li>
+		<% } %> <% if(i == Number(current) + 4 && i < pages) { %>
+		<li class="page-item"><a class="page-link" href="#">...</a></li>
+		<% } %> <% } %> <% if (current == pages) { %>
+		<li class="page-item disabled"><a class="page-link">Last</a></li>
+		<% } else { %>
+		<li class="page-item">
+			<a href="/notes/?page=<%= pages %>" class="page-link">Last</a>
+		</li>
+		<% } %>
+	</ul>
+</nav>
+<% } %>
